@@ -1,25 +1,21 @@
-package ar.unrn.tp.jpa.servicio;
+package ar.unrn.tp.servicio;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import ar.unrn.tp.exception.OptimisticLockException;
 import ar.unrn.tp.mapper.ProductoMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
-import ar.unrn.tp.dto.CategoriaDTO;
-import ar.unrn.tp.dto.ProductoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import ar.unrn.tp.api.ProductoService;
 import ar.unrn.tp.modelo.Categoria;
 import ar.unrn.tp.modelo.Producto;
-
-import java.util.stream.Collectors;
-import org.springframework.web.bind.annotation.*;
 
 @Service
 @Transactional
@@ -48,20 +44,24 @@ public class ProductoServiceJPA implements ProductoService {
 
     @Override
     public void modificarProducto(Long idProducto, String descripcion, float precio, Long idCategoria) {
-        Producto producto = em.find(Producto.class, idProducto);
-        if (producto == null) {
-            throw new IllegalArgumentException("El producto especificado no existe");
-        }
+        try {
+            Producto producto = em.find(Producto.class, idProducto);
+            if (producto == null) {
+                throw new IllegalArgumentException("El producto especificado no existe");
+            }
 
-        Categoria categoria = em.find(Categoria.class, idCategoria);
-        if (categoria == null) {
-            throw new IllegalArgumentException("La categoría especificada no existe");
-        }
+            Categoria categoria = em.find(Categoria.class, idCategoria);
+            if (categoria == null) {
+                throw new IllegalArgumentException("La categoría especificada no existe");
+            }
 
-        producto.setDescripcion(descripcion);
-        producto.setPrecio(BigDecimal.valueOf(precio));
-        producto.setCategoria(categoria);
-        em.merge(producto);
+            producto.setDescripcion(descripcion);
+            producto.setPrecio(BigDecimal.valueOf(precio));
+            producto.setCategoria(categoria);
+            em.merge(producto);
+        }catch (OptimisticLockException e) {
+            throw new OptimisticLockException("El producto ha sido modificado por otro usuario. Por favor, actualiza la página.");
+        }
     }
 
     @Override

@@ -1,26 +1,18 @@
-package ar.unrn.tp.jpa.servicio;
+package ar.unrn.tp.servicio;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-import ar.unrn.tp.mapper.ClienteMapper;
-import ar.unrn.tp.mapper.TarjetaCreditoMapper;
+import ar.unrn.tp.modelo.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
-import ar.unrn.tp.dto.*;
-import ar.unrn.tp.modelo.*;
 import org.springframework.stereotype.Service;
 
 import ar.unrn.tp.api.VentaService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Service
 @Transactional
@@ -53,9 +45,30 @@ public class VentaServiceJPA implements VentaService {
         BigDecimal montoTotal = BigDecimal.valueOf(calcularMonto(productos, idTarjeta));
 
         // Crear y persistir la venta
-        Venta venta = new Venta(cliente, tarjeta, productosDeVenta, montoTotal);
+        Venta venta = new Venta(cliente, tarjeta, productosDeVenta, montoTotal,generarNumeroVenta());
+
         em.persist(venta);
     }
+
+    // Método para generar el número de venta en formato N-AÑO
+    private String generarNumeroVenta() {
+        // Obtiene el año actual
+        int year = LocalDate.now().getYear();
+        // Aquí podrías agregar lógica para obtener el contador (N) del año actual.
+        int n = obtenerContadorDeVentas(year); // Método que debes implementar para obtener el contador
+
+        return n + "-" + year; // Retorna el número en formato N-AÑO
+    }
+
+    // Método para obtener el contador de ventas para el año actual
+    private int obtenerContadorDeVentas(int year) {
+        // Cuenta cuántas ventas hay en el año actual
+        Long count = em.createQuery("SELECT COUNT(v) FROM Venta v WHERE YEAR(v.fecha) = :year", Long.class)
+                .setParameter("year", year)
+                .getSingleResult();
+        return count.intValue() + 1; // Devuelve el número de ventas más 1
+    }
+
 
     @Override
     public float calcularMonto(List<Long> productos, Long idTarjeta) {

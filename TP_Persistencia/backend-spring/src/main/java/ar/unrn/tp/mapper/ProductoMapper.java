@@ -1,8 +1,6 @@
 package ar.unrn.tp.mapper;
 
-import ar.unrn.tp.dto.CategoriaDTO;
 import ar.unrn.tp.dto.ProductoDTO;
-import ar.unrn.tp.modelo.Categoria;
 import ar.unrn.tp.modelo.Producto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

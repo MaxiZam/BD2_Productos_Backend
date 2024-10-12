@@ -1,17 +1,10 @@
 package ar.unrn.tp.modelo;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 
 @Entity
 @Data
@@ -28,7 +21,10 @@ public class Producto {
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
-    
+
+    @Version // Agrega esta anotación
+    private Long version;
+
     public Producto(String codigo, String descripcion, Categoria categoria, String marca, BigDecimal precio) {
         if (codigo == null || codigo.trim().isEmpty()) {
             throw new IllegalArgumentException("El código del producto no puede ser nulo o vacío");

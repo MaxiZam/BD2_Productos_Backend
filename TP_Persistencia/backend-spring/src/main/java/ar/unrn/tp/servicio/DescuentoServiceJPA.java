@@ -1,4 +1,4 @@
-package ar.unrn.tp.jpa.servicio;
+package ar.unrn.tp.servicio;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -7,12 +7,9 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
 import ar.unrn.tp.api.DescuentoService;
-import ar.unrn.tp.dto.DescuentoCompraDTO;
-import ar.unrn.tp.dto.DescuentoProductoDTO;
 import ar.unrn.tp.modelo.DescuentoCompra;
 import ar.unrn.tp.modelo.DescuentoProducto;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 @Service
 @Transactional

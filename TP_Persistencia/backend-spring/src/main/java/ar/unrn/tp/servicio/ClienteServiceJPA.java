@@ -1,22 +1,17 @@
-package ar.unrn.tp.jpa.servicio;
+package ar.unrn.tp.servicio;
 
 import ar.unrn.tp.api.ClienteService;
-import ar.unrn.tp.dto.ClienteDTO;
 import ar.unrn.tp.mapper.ClienteMapper;
 import ar.unrn.tp.modelo.Cliente;
 import ar.unrn.tp.modelo.TarjetaCredito;
 import jakarta.persistence.NoResultException;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -114,14 +109,13 @@ public class ClienteServiceJPA implements ClienteService {
                 .getResultList();
     }
 
-    public Cliente buscarClientePorNombreYDNI(String nombre, String dni) {
+    public Cliente buscarClientePorNombreYDNI(String email) { //luego implementar lo de emial y contraseña
         try {
-            return em.createQuery("SELECT c FROM Cliente c WHERE c.nombre = :nombre AND c.dni = :dni", Cliente.class)
-                    .setParameter("nombre", nombre)
-                    .setParameter("contrasena", dni)
+            return em.createQuery("SELECT c FROM Cliente c WHERE c.email = :email", Cliente.class)
+                    .setParameter("email", email)
                     .getSingleResult();
         } catch (NoResultException e) {
-            return null; // No se encontró un cliente con ese nombre y dni
+            return null; // No se encontró un cliente con ese email
         }
     }
 }

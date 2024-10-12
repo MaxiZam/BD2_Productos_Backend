@@ -18,4 +18,5 @@ public class VentaDTO {
     private Long tarjetaId;
     private List<Long> productos;
     private Float montoTotal;
+    private String numeroVenta;
 }

@@ -1,4 +1,4 @@
-package ar.unrn.tp.jpa.services;
+package ar.unrn.tp.api.jpa.services;
 
 public class ProductoServiceTest {
 }

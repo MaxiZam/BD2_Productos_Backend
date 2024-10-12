@@ -1,19 +1,12 @@
 package ar.unrn.tp.modelo;
 
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 
 @Entity
 @Data
@@ -32,12 +25,17 @@ public class Venta {
     @ManyToMany
     private List<Producto> productos;
     private BigDecimal montoTotal;
+    @Column(unique = true)
+    private String numeroVenta;
 
-    public Venta(Cliente cliente, TarjetaCredito tarjeta, List<Producto> productos, BigDecimal montoTotal) {
+    private static String anio;
+
+    public Venta(Cliente cliente, TarjetaCredito tarjeta, List<Producto> productos, BigDecimal montoTotal, String numeroVenta) {
         this.fecha = LocalDateTime.now();
         this.cliente = cliente;
         this.tarjeta = tarjeta;
         this.productos = productos;
         this.montoTotal = montoTotal;
+        this.numeroVenta = numeroVenta;
     }
 }

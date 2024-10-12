@@ -4,7 +4,9 @@ import ar.unrn.tp.api.ClienteService;
 import ar.unrn.tp.dto.ClienteDTO;
 import ar.unrn.tp.dto.TarjetaCreditoDTO;
 import ar.unrn.tp.mapper.ClienteMapper;
+import ar.unrn.tp.mapper.TarjetaCreditoMapper;
 import ar.unrn.tp.modelo.Cliente;
+import ar.unrn.tp.modelo.TarjetaCredito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,9 @@ public class ClienteController {
 
     @Autowired
     private ClienteMapper clienteMapper;
+
+    @Autowired
+    private TarjetaCreditoMapper tarjetaCreditoMapper;
 
     @PostMapping("/crear")
     public ResponseEntity<String> crearCliente(@RequestBody ClienteDTO clienteDTO) {
@@ -57,11 +62,9 @@ public class ClienteController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> iniciarSesion(@RequestBody ClienteDTO clienteDTO) {
-        String nombre = clienteDTO.getNombre();
-        String contrasena = clienteDTO.getDni();
+    public ResponseEntity<?> iniciarSesion(@RequestBody String email) {
 
-        Cliente cliente = clienteService.buscarClientePorNombreYDNI(nombre, contrasena);
+        Cliente cliente = clienteService.buscarClientePorNombreYDNI(email);
 
         if (cliente != null) {
             // Si se encuentra el cliente, puedes retornar un token o información del cliente
@@ -81,6 +84,12 @@ public class ClienteController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // Retorna un error 500 si algo sale mal
         }
+    }
+
+    @GetMapping("/listar-tarjetas")
+    public ResponseEntity<List<TarjetaCreditoDTO>> obtenerTarjetasCredito(@PathVariable Long clienteId){
+        List<TarjetaCredito> tarjetas = clienteService.listarTarjetas(clienteId);
+        return ResponseEntity.ok(tarjetas.stream().map(tarjetaCreditoMapper::tarjetaCreditoToTarjetaCreditoDTO).collect(Collectors.toList()));
     }
 
 }

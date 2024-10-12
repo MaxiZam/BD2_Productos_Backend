@@ -1,4 +1,4 @@
-package com.ar.unrn.tp.frontend.clases;
+package com.ar.unrn.tp.frontend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,12 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Categoria {
+public class CategoriaDTO {
     private Long id;
     private String nombre;
-
-    // Constructor adicional
-    public Categoria(String nombre) {
-        this.nombre = nombre;
-    }
 }
+

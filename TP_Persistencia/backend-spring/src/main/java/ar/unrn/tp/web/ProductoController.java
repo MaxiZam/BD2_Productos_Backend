@@ -3,7 +3,6 @@ package ar.unrn.tp.web;
 import ar.unrn.tp.api.ProductoService;
 import ar.unrn.tp.dto.CategoriaDTO;
 import ar.unrn.tp.dto.ProductoDTO;
-import ar.unrn.tp.modelo.Categoria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
