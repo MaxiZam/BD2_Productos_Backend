@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:12.10  # Puedes usar 'postgres:latest' si no necesitas una versión específica
+    container_name: productos_db
+    environment:
+      POSTGRES_USER: postgres  # Usuario de la base de datos
+      POSTGRES_PASSWORD: 1111   # Contraseña para el usuario
+      POSTGRES_DB: productos_db  # Nombre de la base de datos inicial
+    ports:
+      - "5002:5432"  # Mapea el puerto 5432 del contenedor al puerto 5002 del host
+    volumes:
+      - pgdata:/var/lib/postgresql/data  # Volumen para persistencia de datos
+    networks:
+      - productos_net  # Red para la comunicación entre contenedores
+
+volumes:
+  pgdata:  # Definición del volumen persistente
+
+networks:
+  productos_net:
+    driver: bridge  # Configura la red en modo bridge
