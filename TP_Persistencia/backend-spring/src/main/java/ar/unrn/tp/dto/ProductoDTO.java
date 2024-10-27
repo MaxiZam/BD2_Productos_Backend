@@ -13,8 +13,9 @@ public class ProductoDTO {
     private Long id;
     private String codigo;
     private Float precio;
-    private String descripcion;
+    private String nombre;
     private String marca;
     private Long categoriaId;
+    private Long version;
 }
 

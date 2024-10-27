@@ -1,6 +1,7 @@
 package ar.unrn.tp.modelo;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,13 +10,14 @@ import java.math.BigDecimal;
 @Entity
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true)
     private String codigo;
-    private String descripcion;
+    private String nombre;
     private String marca;
     private BigDecimal precio;
     @ManyToOne
@@ -25,17 +27,17 @@ public class Producto {
     @Version // Agrega esta anotación
     private Long version;
 
-    public Producto(String codigo, String descripcion, Categoria categoria, String marca, BigDecimal precio) {
+    public Producto(String codigo, String nombre, Categoria categoria, String marca, BigDecimal precio) {
         if (codigo == null || codigo.trim().isEmpty()) {
             throw new IllegalArgumentException("El código del producto no puede ser nulo o vacío");
         }
-        if (descripcion == null || descripcion.trim().isEmpty()) {
+        if (nombre == null || nombre.trim().isEmpty()) {
             throw new IllegalArgumentException("La descripción del producto no puede ser nula o vacía");
         }
         if (categoria == null) {
             throw new IllegalArgumentException("La categoría del producto no puede ser nula");
         }
-        if (marca == null|| descripcion.trim().isEmpty()) {
+        if (marca == null|| nombre.trim().isEmpty()) {
             throw new IllegalArgumentException("La marca del producto no puede ser nula o vacía");
         }
         if (precio == null || precio.compareTo(BigDecimal.ZERO) <= 0) {
@@ -43,7 +45,7 @@ public class Producto {
         }
         
         this.codigo = codigo;
-        this.descripcion = descripcion;
+        this.nombre = nombre;
         this.categoria = categoria;
         this.marca = marca;
         this.precio = precio;

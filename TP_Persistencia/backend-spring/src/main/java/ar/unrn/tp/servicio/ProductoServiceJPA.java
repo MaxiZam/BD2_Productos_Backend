@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import ar.unrn.tp.dto.CategoriaDTO;
 import ar.unrn.tp.exception.OptimisticLockException;
 import ar.unrn.tp.mapper.ProductoMapper;
 import jakarta.persistence.EntityManager;
@@ -43,7 +44,7 @@ public class ProductoServiceJPA implements ProductoService {
     }
 
     @Override
-    public void modificarProducto(Long idProducto, String descripcion, float precio, Long idCategoria) {
+    public void modificarProducto(Long idProducto, String nombre, float precio, Long idCategoria, Long version) {
         try {
             Producto producto = em.find(Producto.class, idProducto);
             if (producto == null) {
@@ -55,18 +56,33 @@ public class ProductoServiceJPA implements ProductoService {
                 throw new IllegalArgumentException("La categoría especificada no existe");
             }
 
-            producto.setDescripcion(descripcion);
+            // Comprobación de la versión
+            if (!producto.getVersion().equals(version)) {
+                throw new OptimisticLockException("El producto ha sido modificado por otro usuario. Por favor, actualiza la página.");
+            }
+
+            // Actualización de los campos
+            producto.setNombre(nombre);
             producto.setPrecio(BigDecimal.valueOf(precio));
             producto.setCategoria(categoria);
+
             em.merge(producto);
-        }catch (OptimisticLockException e) {
+        } catch (OptimisticLockException e) {
             throw new OptimisticLockException("El producto ha sido modificado por otro usuario. Por favor, actualiza la página.");
         }
     }
 
+
     @Override
     public List<Producto> listarProductos() {
         return em.createQuery("SELECT p FROM Producto p", Producto.class).getResultList();
+    }
+
+    @Override
+    public void borrarProducto(Long id) {
+        em.createQuery("DELETE FROM Producto p WHERE p.id = :id")
+                .setParameter("id", id)
+                .executeUpdate();
     }
 
     @Override
@@ -94,6 +110,11 @@ public class ProductoServiceJPA implements ProductoService {
         // Realizar la consulta con los IDs de productos
         return em.createQuery("SELECT p FROM Producto p WHERE p.id IN :ids", Producto.class)
                 .setParameter("ids", productosIds)
+                .getResultList();
+    }
+
+    public List<Categoria> obtenerCategorias(){
+        return em.createQuery("SELECT p FROM Categoria p", Categoria.class)
                 .getResultList();
     }
 }
