@@ -2,6 +2,7 @@ package ar.unrn.tp.web;
 
 import ar.unrn.tp.api.ClienteService;
 import ar.unrn.tp.dto.ClienteDTO;
+import ar.unrn.tp.dto.LoginRequestDTO;
 import ar.unrn.tp.dto.TarjetaCreditoDTO;
 import ar.unrn.tp.mapper.ClienteMapper;
 import ar.unrn.tp.mapper.TarjetaCreditoMapper;
@@ -28,7 +29,7 @@ public class ClienteController {
     @Autowired
     private TarjetaCreditoMapper tarjetaCreditoMapper;
 
-    @PostMapping("/crear")
+    @PostMapping
     public ResponseEntity<String> crearCliente(@RequestBody ClienteDTO clienteDTO) {
         try {
             clienteService.crearCliente(clienteDTO.getNombre(), clienteDTO.getApellido(), clienteDTO.getDni(), clienteDTO.getEmail());
@@ -38,7 +39,7 @@ public class ClienteController {
         }
     }
 
-    @PutMapping("/modificar/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<String> modificarCliente(@PathVariable Long id, @RequestBody ClienteDTO clienteDTO) {
         try {
             clienteService.modificarCliente(id, clienteDTO.getNombre(), clienteDTO.getApellido(), clienteDTO.getDni(), clienteDTO.getEmail());
@@ -62,15 +63,19 @@ public class ClienteController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> iniciarSesion(@RequestBody String email) {
+    public ResponseEntity<?> iniciarSesion(@RequestBody LoginRequestDTO loginRequest) {
+        String email = loginRequest.getEmail(); // Obtén el email del objeto LoginRequest
+        if (email == null || email.trim().isEmpty()) {
+            return ResponseEntity.badRequest().body(null); // Retorna bad request si el email es nulo o vacío
+        }
 
-        Cliente cliente = clienteService.buscarClientePorNombreYDNI(email);
+        Cliente cliente = clienteService.buscarClientePorEmail(email);
+        ClienteDTO clienteDTO = clienteMapper.clienteToClienteDTO(cliente); // Usar la inyección en lugar de la instancia estática
 
-        if (cliente != null) {
-            // Si se encuentra el cliente, puedes retornar un token o información del cliente
-            return ResponseEntity.ok(cliente); // Retorna el cliente encontrado
+        if (clienteDTO != null) {
+            return ResponseEntity.ok(clienteDTO); // Retorna el cliente encontrado si la autenticación es exitosa
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
     }
 
@@ -86,11 +91,13 @@ public class ClienteController {
         }
     }
 
-    @GetMapping("/listar-tarjetas")
-    public ResponseEntity<List<TarjetaCreditoDTO>> obtenerTarjetasCredito(@PathVariable Long clienteId){
+    @GetMapping("/listar-tarjetas/{clienteId}")
+    public ResponseEntity<List<TarjetaCreditoDTO>> obtenerTarjetasCredito(@PathVariable Long clienteId) {
         List<TarjetaCredito> tarjetas = clienteService.listarTarjetas(clienteId);
-        return ResponseEntity.ok(tarjetas.stream().map(tarjetaCreditoMapper::tarjetaCreditoToTarjetaCreditoDTO).collect(Collectors.toList()));
+        return ResponseEntity.ok(tarjetas.stream()
+                .map(tarjetaCreditoMapper::tarjetaCreditoToTarjetaCreditoDTO)
+                .collect(Collectors.toList()));
     }
-
 }
+
 

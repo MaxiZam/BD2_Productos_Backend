@@ -3,6 +3,7 @@ package ar.unrn.tp.modelo;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -27,8 +28,6 @@ public class Venta {
     private BigDecimal montoTotal;
     @Column(unique = true)
     private String numeroVenta;
-
-    private static String anio;
 
     public Venta(Cliente cliente, TarjetaCredito tarjeta, List<Producto> productos, BigDecimal montoTotal, String numeroVenta) {
         this.fecha = LocalDateTime.now();

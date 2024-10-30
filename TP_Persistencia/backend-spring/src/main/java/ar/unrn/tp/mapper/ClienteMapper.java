@@ -10,12 +10,13 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring", uses = TarjetaCreditoMapper.class)
 public interface ClienteMapper {
 
-    ClienteMapper INSTANCE = Mappers.getMapper(ClienteMapper.class);
-
+    // Mapeo de cliente a DTO
     @Mapping(target = "tarjetas", source = "tarjetas")
     ClienteDTO clienteToClienteDTO(Cliente cliente);
 
+    // Mapeo de DTO a cliente
     @Mapping(target = "tarjetas", source = "tarjetas")
     Cliente clienteDTOToCliente(ClienteDTO clienteDTO);
 }
+
 

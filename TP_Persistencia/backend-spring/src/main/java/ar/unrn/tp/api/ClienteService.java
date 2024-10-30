@@ -11,5 +11,5 @@ public interface ClienteService {
     void modificarCliente(Long idCliente, String nombre, String apellido,String dni, String email);
     void agregarTarjeta(Long idCliente, String nro, String marca);
     List<TarjetaCredito> listarTarjetas(Long idCliente);
-    public Cliente buscarClientePorNombreYDNI(String nombre);
+    public Cliente buscarClientePorEmail(String nombre);
 }

@@ -10,16 +10,15 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = "spring")
 public interface TarjetaCreditoMapper {
 
-    TarjetaCreditoMapper INSTANCE = Mappers.getMapper(TarjetaCreditoMapper.class);
-
-    // Mapear el clienteId al objeto Cliente
+    // Mapeo de tarjeta de crédito a DTO
     @Mapping(target = "clienteId", source = "cliente.id")
     TarjetaCreditoDTO tarjetaCreditoToTarjetaCreditoDTO(TarjetaCredito tarjetaCredito);
 
+    // Mapeo de DTO a tarjeta de crédito
     @Mapping(target = "cliente", source = "clienteId")
     TarjetaCredito tarjetaCreditoDTOToTarjetaCredito(TarjetaCreditoDTO tarjetaCreditoDTO);
 
-    // Este método mapeará el clienteId a un objeto Cliente
+    // Método para mapear Long a Cliente
     default Cliente map(Long clienteId) {
         if (clienteId == null) {
             return null;
@@ -29,5 +28,6 @@ public interface TarjetaCreditoMapper {
         return cliente;
     }
 }
+
 
 

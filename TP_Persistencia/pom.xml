@@ -9,7 +9,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>cliente-swing</module>
         <module>backend-spring</module>
     </modules>
 

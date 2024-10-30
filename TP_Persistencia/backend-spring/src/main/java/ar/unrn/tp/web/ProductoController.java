@@ -18,7 +18,7 @@ public class ProductoController {
     @Autowired
     private ProductoService productoService;
 
-    @PostMapping("/crear")
+    @PostMapping
     public ResponseEntity<String> crearProducto(@RequestBody ProductoDTO productoDTO) {
         try {
             productoService.crearProducto(
@@ -34,35 +34,35 @@ public class ProductoController {
         }
     }
 
-    @PutMapping("/modificar/{id}")
-    public ResponseEntity<String> modificarProducto(
-            @PathVariable("id") Long idProducto,
-            @RequestBody ProductoDTO productoDTO) {
+    @PutMapping("/{id}")
+    public ResponseEntity<String> modificarProducto(@PathVariable Long id, @RequestBody ProductoDTO productoDTO) {
         try {
             productoService.modificarProducto(
-                    idProducto,
+                    id,
                     productoDTO.getNombre(),
                     productoDTO.getPrecio(),
+                    productoDTO.getMarca(),
                     productoDTO.getCategoriaId(),
                     productoDTO.getVersion()
             );
             return ResponseEntity.ok("Producto modificado exitosamente");
         } catch (OptimisticLockException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Error de concurrencia: " + e.getMessage());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Error de datos: " + e.getMessage());
         }
     }
 
 
-    @GetMapping("/listar")
+
+    @GetMapping
     public ResponseEntity<List<ProductoDTO>> listarProductos() {
         List<ProductoDTO> productos = productoService.listarProductos();
         return ResponseEntity.ok(productos);
     }
 
-    @DeleteMapping
-    public ResponseEntity<String> borrarProducto(@RequestParam Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> borrarProducto(@PathVariable Long id) {
         try {
             productoService.borrarProducto(id);
             return ResponseEntity.ok("Producto eliminado exitosamente");

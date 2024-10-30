@@ -2,11 +2,13 @@ package ar.unrn.tp.web;
 
 import ar.unrn.tp.api.VentaService;
 import ar.unrn.tp.dto.VentaDTO;
+import ar.unrn.tp.modelo.Venta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -17,7 +19,7 @@ public class VentaController {
     private VentaService ventaService;
 
     // Método para realizar una venta
-    @PostMapping("/crear")
+    @PostMapping
     public ResponseEntity<Void> realizarVenta(@RequestBody VentaDTO ventaDTO) {
         try {
             ventaService.realizarVenta(ventaDTO.getClienteId(), ventaDTO.getProductos(), ventaDTO.getTarjetaId());
@@ -43,13 +45,37 @@ public class VentaController {
     }
 
     // Método para listar todas las ventas
-    @GetMapping("/listar")
+    @GetMapping
     public ResponseEntity<List<VentaDTO>> listarVentas() {
         try {
             List<VentaDTO> ventas = ventaService.listarVentas();
             return ResponseEntity.ok(ventas); // 200 OK
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // 500 Internal Server Error
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> borrarVenta(@PathVariable Long id) {
+        try {
+            ventaService.borrarVenta(id);
+            return ResponseEntity.ok("Venta eliminada exitosamente");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Error: La venta con ID " + id + " no existe.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar la venta.");
+        }
+    }
+
+    @GetMapping("/ultimas/{id}")
+    public ResponseEntity<List<VentaDTO>> ultimasVentas(@PathVariable Long id) {
+        try {
+            // Llama al servicio para obtener las últimas ventas desde cache o base de datos
+            List<VentaDTO> ultimasVentas = ventaService.obtenerUltimasVentasCliente(id);
+            return ResponseEntity.ok(ultimasVentas);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.emptyList());
         }
     }
 }

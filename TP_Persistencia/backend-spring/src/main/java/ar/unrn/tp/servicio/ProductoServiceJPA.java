@@ -8,7 +8,9 @@ import ar.unrn.tp.dto.CategoriaDTO;
 import ar.unrn.tp.exception.OptimisticLockException;
 import ar.unrn.tp.mapper.ProductoMapper;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +22,7 @@ import ar.unrn.tp.modelo.Producto;
 
 @Service
 @Transactional
-public class ProductoServiceJPA implements ProductoService {
+public class ProductoServiceJPA implements ProductoService { //docker exec -it a39dca4055c8 psql -U postgres productos_db (como ingresar a la base de datos)
 
     @PersistenceContext
     private EntityManager em;
@@ -44,32 +46,36 @@ public class ProductoServiceJPA implements ProductoService {
     }
 
     @Override
-    public void modificarProducto(Long idProducto, String nombre, float precio, Long idCategoria, Long version) {
-        try {
-            Producto producto = em.find(Producto.class, idProducto);
-            if (producto == null) {
-                throw new IllegalArgumentException("El producto especificado no existe");
-            }
+    public void modificarProducto(Long idProducto, String nombre, float precio, String marca, Long idCategoria, Long version) {
+        if (idProducto == null) {
+            throw new IllegalArgumentException("El ID del producto no puede ser nulo.");
+        }
+        if (idCategoria == null) {
+            throw new IllegalArgumentException("El ID de la categoría no puede ser nulo.");
+        }
 
-            Categoria categoria = em.find(Categoria.class, idCategoria);
-            if (categoria == null) {
-                throw new IllegalArgumentException("La categoría especificada no existe");
-            }
+        Producto producto = em.find(Producto.class, idProducto);
+        if (producto == null) {
+            throw new IllegalArgumentException("El producto especificado no existe.");
+        }
 
-            // Comprobación de la versión
-            if (!producto.getVersion().equals(version)) {
-                throw new OptimisticLockException("El producto ha sido modificado por otro usuario. Por favor, actualiza la página.");
-            }
+        Categoria categoria = em.find(Categoria.class, idCategoria);
+        if (categoria == null) {
+            throw new IllegalArgumentException("La categoría especificada no existe.");
+        }
 
-            // Actualización de los campos
-            producto.setNombre(nombre);
-            producto.setPrecio(BigDecimal.valueOf(precio));
-            producto.setCategoria(categoria);
-
-            em.merge(producto);
-        } catch (OptimisticLockException e) {
+        // Comprobación de la versión para evitar conflictos de concurrencia
+        if (!producto.getVersion().equals(version)) {
             throw new OptimisticLockException("El producto ha sido modificado por otro usuario. Por favor, actualiza la página.");
         }
+
+        // Actualización de los campos
+        producto.setNombre(nombre);
+        producto.setPrecio(BigDecimal.valueOf(precio));
+        producto.setMarca(marca);
+        producto.setCategoria(categoria);
+
+        em.merge(producto);
     }
 
 
@@ -79,10 +85,44 @@ public class ProductoServiceJPA implements ProductoService {
     }
 
     @Override
+    public Producto obtenerProductoPorId(Long id) {
+        if (id == null) {
+            throw new IllegalArgumentException("El ID no puede ser nulo");
+        }
+        Producto producto = em.find(Producto.class, id);
+        if (producto == null) {
+            throw new IllegalArgumentException("El producto con ID " + id + " no existe");
+        }
+        return producto;
+    }
+
+
+    @Override
+    public Producto obtenerProductoPorCodigo(String codigo) {
+        try {
+
+            return em.createQuery("SELECT p FROM Producto p WHERE p.codigo = :codigo", Producto.class)
+                    .setParameter("codigo", codigo)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            throw new IllegalArgumentException("El producto no existe");
+        } catch (PersistenceException e) {
+            throw new RuntimeException("Error al obtener el producto: " + e.getMessage(), e);
+        }
+    }
+
+
+    @Override
     public void borrarProducto(Long id) {
-        em.createQuery("DELETE FROM Producto p WHERE p.id = :id")
-                .setParameter("id", id)
-                .executeUpdate();
+        try {
+            Producto producto = em.find(Producto.class, id);
+            if (producto == null) {
+                throw new IllegalArgumentException("El producto no existe");
+            }
+            em.remove(producto);
+        } catch (PersistenceException e) {
+            throw new RuntimeException("Error al eliminar el producto: " + e.getMessage(), e);
+        }
     }
 
     @Override

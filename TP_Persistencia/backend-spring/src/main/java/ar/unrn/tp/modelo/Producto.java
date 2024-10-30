@@ -24,7 +24,7 @@ public class Producto {
     @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
-    @Version // Agrega esta anotación
+    @Version
     private Long version;
 
     public Producto(String codigo, String nombre, Categoria categoria, String marca, BigDecimal precio) {

@@ -109,7 +109,8 @@ public class ClienteServiceJPA implements ClienteService {
                 .getResultList();
     }
 
-    public Cliente buscarClientePorNombreYDNI(String email) { //luego implementar lo de emial y contraseña
+    @Override
+    public Cliente buscarClientePorEmail(String email) { //luego implementar lo de emial y contraseña
         try {
             return em.createQuery("SELECT c FROM Cliente c WHERE c.email = :email", Cliente.class)
                     .setParameter("email", email)

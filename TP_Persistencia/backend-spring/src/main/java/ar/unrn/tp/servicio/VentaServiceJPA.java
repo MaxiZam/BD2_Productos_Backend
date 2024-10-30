@@ -8,8 +8,11 @@ import java.util.List;
 import ar.unrn.tp.modelo.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import ar.unrn.tp.api.VentaService;
@@ -20,6 +23,11 @@ public class VentaServiceJPA implements VentaService {
 
     @PersistenceContext
     private EntityManager em;
+
+    @Autowired
+    private RedisTemplate<String, List<Venta>> redisTemplate;
+
+    private static final String VENTAS_CACHE_KEY_PREFIX = "ventas_";
 
     @Override
     public void realizarVenta(Long idCliente, List<Long> productos, Long idTarjeta) {
@@ -45,59 +53,43 @@ public class VentaServiceJPA implements VentaService {
         BigDecimal montoTotal = BigDecimal.valueOf(calcularMonto(productos, idTarjeta));
 
         // Crear y persistir la venta
-        Venta venta = new Venta(cliente, tarjeta, productosDeVenta, montoTotal,generarNumeroVenta());
+        Venta venta = new Venta(cliente, tarjeta, productosDeVenta, montoTotal, generarNumeroVenta());
 
-        em.persist(venta);
+        registrarNuevaVenta(venta);
     }
 
     // Método para generar el número de venta en formato N-AÑO
     private String generarNumeroVenta() {
-        // Obtiene el año actual
         int year = LocalDate.now().getYear();
-        // Aquí podrías agregar lógica para obtener el contador (N) del año actual.
-        int n = obtenerContadorDeVentas(year); // Método que debes implementar para obtener el contador
-
-        return n + "-" + year; // Retorna el número en formato N-AÑO
+        int n = obtenerContadorDeVentas(year);
+        return n + "-" + year;
     }
 
-    // Método para obtener el contador de ventas para el año actual
     private int obtenerContadorDeVentas(int year) {
-        // Cuenta cuántas ventas hay en el año actual
         Long count = em.createQuery("SELECT COUNT(v) FROM Venta v WHERE YEAR(v.fecha) = :year", Long.class)
                 .setParameter("year", year)
                 .getSingleResult();
-        return count.intValue() + 1; // Devuelve el número de ventas más 1
+        return count.intValue() + 1;
     }
-
 
     @Override
     public float calcularMonto(List<Long> productos, Long idTarjeta) {
-        // Verificar que la lista de productos no esté vacía
         if (productos == null || productos.isEmpty()) {
             throw new IllegalArgumentException("El carrito no puede estar vacío");
         }
 
-        // Obtener productos de la base de datos
         List<Producto> productosDeVenta = obtenerProductosPorIds(productos);
-
-        // Verificar que se hayan encontrado productos
         if (productosDeVenta.isEmpty()) {
             throw new IllegalArgumentException("No se encontraron productos en el carrito");
         }
 
-        // Verificar la existencia de la tarjeta
         TarjetaCredito tarjeta = em.find(TarjetaCredito.class, idTarjeta);
         if (tarjeta == null) {
             throw new IllegalArgumentException("La tarjeta no existe");
         }
 
-        // Calcular el total aplicando descuentos de productos
         BigDecimal total = calcularTotalConDescuentos(productosDeVenta);
-
-        // Aplicar descuento sobre el total
-        total = aplicarDescuentoTotal(total, tarjeta);
-
-        return total.floatValue();
+        return aplicarDescuentoTotal(total, tarjeta).floatValue();
     }
 
     private List<Producto> obtenerProductosPorIds(List<Long> productos) {
@@ -115,7 +107,6 @@ public class VentaServiceJPA implements VentaService {
         LocalDate hoy = LocalDate.now();
         BigDecimal total = BigDecimal.ZERO;
 
-        // Obtener descuentos de productos válidos para hoy
         List<DescuentoProducto> descuentosProducto = em.createQuery(
                         "SELECT d FROM DescuentoProducto d WHERE :hoy BETWEEN d.fechaInicio AND d.fechaFin",
                         DescuentoProducto.class)
@@ -124,11 +115,10 @@ public class VentaServiceJPA implements VentaService {
 
         for (Producto producto : productosDeVenta) {
             BigDecimal precioProducto = producto.getPrecio();
-            // Aplicar descuentos a cada producto
             for (DescuentoProducto descuento : descuentosProducto) {
                 if (descuento.aplicaA(producto)) {
                     precioProducto = descuento.aplicarDescuento(precioProducto);
-                    break; // Solo aplicar un descuento por producto
+                    break;
                 }
             }
             total = total.add(precioProducto);
@@ -158,6 +148,62 @@ public class VentaServiceJPA implements VentaService {
     public List<Venta> listarVentas() {
         return em.createQuery("SELECT v FROM Venta v", Venta.class).getResultList();
     }
+
+    @Override
+    public void borrarVenta(Long id) {
+        try {
+            Venta venta = em.find(Venta.class, id);
+            if (venta == null) {
+                throw new IllegalArgumentException("La venta no existe");
+            }
+            em.remove(venta);
+        } catch (PersistenceException e) {
+            throw new RuntimeException("Error al eliminar la venta: " + e.getMessage(), e);
+        }
+    }
+
+    // Método para obtener las últimas 3 ventas de un cliente, primero intentando en caché
+    public List<Venta> obtenerUltimasVentasCliente(Long clienteId) {
+        String cacheKey = VENTAS_CACHE_KEY_PREFIX + clienteId;
+
+        // Intentar obtener ventas desde la cache
+        List<Venta> ventasCacheadas = redisTemplate.opsForValue().get(cacheKey);
+        if (ventasCacheadas != null && !ventasCacheadas.isEmpty()) {
+            return ventasCacheadas;
+        }
+
+        // Si no están en cache, obtener de la base de datos y almacenar en cache
+        List<Venta> ultimasVentas = em.createQuery("SELECT v FROM Venta v WHERE v.cliente.id = :clienteId ORDER BY v.fecha DESC", Venta.class)
+                .setParameter("clienteId", clienteId)
+                .setMaxResults(3)
+                .getResultList();
+
+        // Guardar el resultado en la cache para futuras consultas
+        redisTemplate.opsForValue().set(cacheKey, ultimasVentas);
+
+        return ultimasVentas;
+    }
+
+    // Método para registrar una nueva venta y actualizar la cache
+    private void registrarNuevaVenta(Venta venta) {
+        em.persist(venta);
+        actualizarCacheUltimasVentas(venta.getCliente().getId());
+    }
+
+    // Método privado para actualizar el cache con la nueva venta
+    private void actualizarCacheUltimasVentas(Long clienteId) {
+        String cacheKey = VENTAS_CACHE_KEY_PREFIX + clienteId;
+
+        // Obtener la lista actualizada de últimas ventas
+        List<Venta> ultimasVentas = em.createQuery("SELECT v FROM Venta v WHERE v.cliente.id = :clienteId ORDER BY v.fecha DESC", Venta.class)
+                .setParameter("clienteId", clienteId)
+                .setMaxResults(3)
+                .getResultList();
+
+        // Actualizar cache con la nueva lista de ventas
+        redisTemplate.opsForValue().set(cacheKey, ultimasVentas);
+    }
 }
+
 
 
