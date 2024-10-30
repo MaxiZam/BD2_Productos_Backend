@@ -25,11 +25,11 @@ public class Venta {
     private TarjetaCredito tarjeta;
     @ManyToMany
     private List<Producto> productos;
-    private BigDecimal montoTotal;
+    private Float montoTotal;
     @Column(unique = true)
     private String numeroVenta;
 
-    public Venta(Cliente cliente, TarjetaCredito tarjeta, List<Producto> productos, BigDecimal montoTotal, String numeroVenta) {
+    public Venta(Cliente cliente, TarjetaCredito tarjeta, List<Producto> productos, Float montoTotal, String numeroVenta) {
         this.fecha = LocalDateTime.now();
         this.cliente = cliente;
         this.tarjeta = tarjeta;

@@ -16,7 +16,7 @@ public class VentaDTO {
     private LocalDateTime fecha;
     private Long clienteId;
     private Long tarjetaId;
-    private List<Long> productos;
+    private List<ProductoDTO> productos;
     private Float montoTotal;
     private String numeroVenta;
 }

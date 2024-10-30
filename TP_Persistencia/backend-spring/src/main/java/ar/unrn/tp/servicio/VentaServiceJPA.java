@@ -50,7 +50,7 @@ public class VentaServiceJPA implements VentaService {
         }
 
         // Calcular el monto total
-        BigDecimal montoTotal = BigDecimal.valueOf(calcularMonto(productos, idTarjeta));
+        Float montoTotal = calcularMonto(productos, idTarjeta);
 
         // Crear y persistir la venta
         Venta venta = new Venta(cliente, tarjeta, productosDeVenta, montoTotal, generarNumeroVenta());
@@ -162,45 +162,36 @@ public class VentaServiceJPA implements VentaService {
         }
     }
 
-    // Método para obtener las últimas 3 ventas de un cliente, primero intentando en caché
+    @Override
     public List<Venta> obtenerUltimasVentasCliente(Long clienteId) {
         String cacheKey = VENTAS_CACHE_KEY_PREFIX + clienteId;
 
-        // Intentar obtener ventas desde la cache
         List<Venta> ventasCacheadas = redisTemplate.opsForValue().get(cacheKey);
         if (ventasCacheadas != null && !ventasCacheadas.isEmpty()) {
             return ventasCacheadas;
         }
 
-        // Si no están en cache, obtener de la base de datos y almacenar en cache
-        List<Venta> ultimasVentas = em.createQuery("SELECT v FROM Venta v WHERE v.cliente.id = :clienteId ORDER BY v.fecha DESC", Venta.class)
-                .setParameter("clienteId", clienteId)
-                .setMaxResults(3)
-                .getResultList();
-
-        // Guardar el resultado en la cache para futuras consultas
+        List<Venta> ultimasVentas = obtenerUltimasVentasDesdeDB(clienteId);
         redisTemplate.opsForValue().set(cacheKey, ultimasVentas);
 
         return ultimasVentas;
     }
 
-    // Método para registrar una nueva venta y actualizar la cache
+    private List<Venta> obtenerUltimasVentasDesdeDB(Long clienteId) {
+        return em.createQuery("SELECT v FROM Venta v WHERE v.cliente.id = :clienteId ORDER BY v.fecha DESC", Venta.class)
+                .setParameter("clienteId", clienteId)
+                .setMaxResults(3)
+                .getResultList();
+    }
+
     private void registrarNuevaVenta(Venta venta) {
         em.persist(venta);
         actualizarCacheUltimasVentas(venta.getCliente().getId());
     }
 
-    // Método privado para actualizar el cache con la nueva venta
     private void actualizarCacheUltimasVentas(Long clienteId) {
         String cacheKey = VENTAS_CACHE_KEY_PREFIX + clienteId;
-
-        // Obtener la lista actualizada de últimas ventas
-        List<Venta> ultimasVentas = em.createQuery("SELECT v FROM Venta v WHERE v.cliente.id = :clienteId ORDER BY v.fecha DESC", Venta.class)
-                .setParameter("clienteId", clienteId)
-                .setMaxResults(3)
-                .getResultList();
-
-        // Actualizar cache con la nueva lista de ventas
+        List<Venta> ultimasVentas = obtenerUltimasVentasDesdeDB(clienteId);
         redisTemplate.opsForValue().set(cacheKey, ultimasVentas);
     }
 }
