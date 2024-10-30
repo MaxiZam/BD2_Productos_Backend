@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: ventas-productos
+
+  redis: #Cache
+    host: localhost
+    port: 6379
+
+  datasource:
+    url: jdbc:postgresql://localhost:5002/productos_db  # Verifica que el puerto sea el correcto
+    username: postgres
+    password: 1111
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update  # Considera cambiar esto si es un entorno de producción
+
+logging:
+  level:
+    org:
+      hibernate: DEBUG
+      springframework: DEBUG
+
+server:
+  port: 8080

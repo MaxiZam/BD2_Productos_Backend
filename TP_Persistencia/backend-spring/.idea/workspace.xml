@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5ba19740-eed8-40ff-ba35-62daf4a15c77" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../bd2-tp3-java-swing-frontend/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../bd2-tp3-java-swing-frontend/.idea/bd2-tp3-java-swing-frontend.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../bd2-tp3-java-swing-frontend/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../bd2-tp3-java-swing-frontend/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../bd2-tp3-java-swing-frontend/src/main/java/com/ar/unrn/tp/frontend/SwingApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../bd2-tp3-java-swing-frontend/src/main/java/com/ar/unrn/tp/frontend/service/ApiService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../bd2-tp3-java-swing-frontend/src/main/java/com/ar/unrn/tp/frontend/ui/AplicationComprasClientes.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../bd2-tp3-java-swing-frontend/src/main/java/resources/config.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker-compose.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/config/WebConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/dto/CategoriaDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/dto/ClienteDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/dto/DescuentoCompraDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/dto/DescuentoProductoDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/dto/ProductoDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/dto/TarjetaCreditoDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/dto/VentaDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/resources/application-test.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../../.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../bd2-tp3-java-swing-frontend/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/api/ProductoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/api/ProductoService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/api/VentaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/api/VentaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/jpa/servicio/ClienteServiceJPA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/jpa/servicio/ClienteServiceJPA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/jpa/servicio/DescuentoServiceJPA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/jpa/servicio/DescuentoServiceJPA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/jpa/servicio/ProductoServiceJPA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/jpa/servicio/ProductoServiceJPA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/jpa/servicio/VentaServiceJPA.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/jpa/servicio/VentaServiceJPA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/modelo/Categoria.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/modelo/Categoria.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/modelo/Cliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/modelo/Cliente.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/modelo/DescuentoCompra.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/modelo/DescuentoCompra.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/modelo/DescuentoProducto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/modelo/DescuentoProducto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/modelo/Producto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/modelo/Producto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/modelo/TarjetaCredito.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/modelo/TarjetaCredito.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/modelo/Venta.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/ar/unrn/tp/modelo/Venta.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/ar/unrn/tp/ServiciosJPATest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/ar/unrn/tp/ServiciosJPATest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/resources/test-persistence.xml" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 7
+}]]></component>
+  <component name="ProjectId" id="2mrDlFebRR98TZPYfTLjdVFCPIp" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/maxiz/OneDrive/Documentos/Lic. en Sistemas/4to año/Base de Datos 2/TP2 - Persistiendo Objetos/TP_Persistencia/bd2_tp2"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5ba19740-eed8-40ff-ba35-62daf4a15c77" name="Changes" comment="" />
+      <created>1727825951046</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1727825951046</updated>
+    </task>
+    <servers />
+  </component>
+</project>

@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: ventas-productos-test
+
+  datasource:
+    url: jdbc:postgresql://localhost:5002/productos_test_db
+    username: postgres
+    password: 1111
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop  # Crea la base de datos al inicio y la elimina al finalizar las pruebas
+
+  h2:
+    console:
+      enabled: true  # Activar si usas una base de datos en memoria H2 en los tests
+
+logging:
+  level:
+    org:
+      hibernate: DEBUG
+      springframework: DEBUG
